@@ -1,0 +1,3 @@
+rootProject.name = 'StockTickerApp'
+
+include ':app'
