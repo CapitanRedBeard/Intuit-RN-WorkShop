@@ -7,18 +7,27 @@ import {
     TextInput,
     View,
     NavigatorIOS,
-    Image
+    ActivityIndicator,
+    Image,
+    TouchableHighlight
 } from 'react-native';
 
 class SearchPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            tickerText: ''
+            tickerText: '',
+            isLoading: false,
+            message: ''
         }
     }
 
     render() {
+        let spinner = this.state.isLoading ?
+            ( <ActivityIndicator
+                size='large'/> ) :
+            ( <View/>);
+
         return (
             <View style={styles.container}>
                 <Text style={styles.textTitle}>
@@ -28,20 +37,90 @@ class SearchPage extends Component {
                 <Text style={styles.textFields}>
                     Search by ticker
                 </Text>
-                <TextInput style={styles.searchInput}
-                           placeholder={"INTU, APPL"}
-                           onChangeText={(text) => this.setState({tickerText: text})}
-                           value={this.state.tickerText}
-                />
-                <Text style={styles.textFields}>
-                    {this.state.tickerText}
-                </Text>
+
+                <View style={styles.flowRight}>
+                    <TextInput style={styles.searchInput}
+                               placeholder={"INTU, APPL"}
+                               onChangeText={(text) => this.setState({tickerText: text})}
+                               value={this.state.tickerText}
+                    />
+                    <TouchableHighlight style={styles.button}
+                                        underlayColor='#99d9f4'
+                                        onPress={this.onSearchPressed.bind(this)}>
+                        <Text style={styles.buttonText}>Go</Text>
+                    </TouchableHighlight>
+                </View>
+
+                {spinner}
+
+                <Text style={styles.description}>{this.state.message}</Text>
             </View>
         );
     }
+
+    _executeQuery(query) {
+        console.log(query);
+        this.setState({isLoading: true});
+
+        fetch(query, {method: "GET"})
+            .then((response) => response.json())
+            .then(json => this._handleResponse(json))
+            .catch(error =>
+                this.setState({
+                    isLoading: false,
+                    message: 'Something bad happened ' + error
+                }));
+    }
+
+    _handleResponse(response) {
+        this.setState({isLoading: false, message: ''});
+
+        console.log(response);
+    }
+
+    onSearchPressed() {
+        let query = urlForQueryAndPage(this.state.tickerText);
+        this._executeQuery(query);
+    }
+
+}
+
+function urlForQueryAndPage(tickers) {
+    data = {
+        format: 'json',
+        view: 'detail'
+    };
+
+    var querystring = Object.keys(data)
+        .map(key => key + '=' + encodeURIComponent(data[key]))
+        .join('&');
+
+    return 'http://finance.yahoo.com/webservice/v1/symbols/' + tickers + '/quote?' + querystring;
 }
 
 const styles = StyleSheet.create({
+    flowRight: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        alignSelf: 'stretch'
+    },
+    buttonText: {
+        fontSize: 18,
+        color: 'white',
+        alignSelf: 'center'
+    },
+    button: {
+        height: 36,
+        flex: 1,
+        flexDirection: 'row',
+        backgroundColor: '#48BBEC',
+        borderColor: '#48BBEC',
+        borderWidth: 1,
+        borderRadius: 8,
+        marginBottom: 10,
+        alignSelf: 'stretch',
+        justifyContent: 'center'
+    },
     textFields: {
         marginBottom: 20,
         fontSize: 18,
@@ -65,6 +144,8 @@ const styles = StyleSheet.create({
     searchInput: {
         height: 36,
         padding: 4,
+        marginRight: 10,
+        flex: 4,
         fontSize: 18,
         borderWidth: 1,
         borderColor: '#48BBEC',
