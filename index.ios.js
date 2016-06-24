@@ -10,10 +10,11 @@ import {
     StyleSheet,
     Text,
     TextInput,
-    View
+    View,
+    NavigatorIOS
 } from 'react-native';
 
-class StockTickerApp extends Component {
+class SearchPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -43,6 +44,19 @@ class StockTickerApp extends Component {
     }
 }
 
+class StockTickerApp extends React.Component {
+    render() {
+        return (
+            <NavigatorIOS
+                style={styles.navContainer}
+                initialRoute={{
+          title: 'Stock Finder',
+          component: SearchPage
+        }}/>
+        );
+    }
+}
+
 const styles = StyleSheet.create({
     textFields: {
         marginBottom: 20,
@@ -52,7 +66,11 @@ const styles = StyleSheet.create({
     container: {
         padding: 30,
         marginTop: 65,
-        alignItems: 'center'
+        alignItems: 'center',
+        
+    },
+    navContainer: {
+        flex: 1,
     },
     searchInput: {
         height: 36,
