@@ -42,6 +42,8 @@ class SearchPage extends Component {
                 <View style={styles.flowRight}>
                     <TextInput style={styles.searchInput}
                                placeholder={"INTU, APPL"}
+                               placeholderTextColor="grey"
+                               selectionColor="white"
                                onChangeText={(text) => this.setState({tickerText: text})}
                                value={this.state.tickerText}
                     />
@@ -60,8 +62,6 @@ class SearchPage extends Component {
     }
 
     _executeQuery(query) {
-        console.log(query);
-        
         this.setState({isLoading: true});
 
         fetch(query, {method: "GET"})
@@ -77,8 +77,6 @@ class SearchPage extends Component {
     _handleResponse(response) {
         this.setState({isLoading: false, message: ''});
 
-        console.log(response);
-        
         this.props.navigator.push({
             title: 'Results',
             component: StockResults,
@@ -114,15 +112,15 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         fontSize: 18,
-        color: 'white',
+        color: "#001d3d",
         alignSelf: 'center'
     },
     button: {
         height: 36,
         flex: 1,
         flexDirection: 'row',
-        backgroundColor: '#48BBEC',
-        borderColor: '#48BBEC',
+        backgroundColor: 'white',
+        borderColor: 'white',
         borderWidth: 1,
         borderRadius: 8,
         marginBottom: 10,
@@ -131,19 +129,22 @@ const styles = StyleSheet.create({
     },
     textFields: {
         marginBottom: 20,
-        fontSize: 18,
+        marginTop: 20,
+        fontSize: 24,
         textAlign: 'center',
-        color: '#656565'
+        color: 'white'
     },
     textTitle: {
-        color: '#656565',
-        fontSize: 30,
+        color: 'white',
+        fontSize: 48,
         marginBottom: 20,
     },
     container: {
+        backgroundColor: "#001d3d",
         padding: 30,
         marginTop: 65,
         alignItems: 'center',
+        flex: 1
 
     },
     navContainer: {
@@ -156,13 +157,12 @@ const styles = StyleSheet.create({
         flex: 4,
         fontSize: 18,
         borderWidth: 1,
-        borderColor: '#48BBEC',
+        borderColor: 'white',
         borderRadius: 8,
-        color: '#48BBEC'
+        color: 'white'
     },
     image: {
-        height: 138,
-        flex: 1,
+        height: 165,
         marginBottom: 20
     }
 });

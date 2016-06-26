@@ -29,27 +29,31 @@ class DetailPage extends Component {
         var yearHigh = twoDigit(data.year_high);
         var caret = delta >= 0 ? 
             <Image source={require('./Resources/caret-up.png')} style={styles.caret}/> :
-            <Image source={require('./Resources/caret-down.png')} style={styles.caret}/>
+            <Image source={require('./Resources/caret-down.png')} style={styles.caret}/>;
+
+        var infoColor = delta >= 0 ? {color: "#91DC5A"} : {color: "#D80027"}
 
         return (
-            <ScrollView contentContainerStyle={styles.wrapper}>
-                <Text style={styles.title}>{name} ({ticker})</Text>
-                {caret}
-                <View style={styles.row}>                    
-                    <Text style={styles.info}>Price: {price}</Text>
-                    <Text style={styles.info}>Volume: {volume}</Text>
-                </View>
-                <View style={styles.row}>
-                    <Text style={styles.info}>Change: ${delta}</Text>
-                    <Text style={styles.info}>{deltaInPercent}%</Text>
-                </View>  
-                <View style={styles.row}>
-                    <Text style={styles.info}>Day High: ${dayHigh}</Text>
-                    <Text style={styles.info}>Day Low: ${dayLow}</Text>
-                </View>
-                <View style={styles.row}>
-                    <Text style={styles.info}>Year High: ${yearHigh}</Text>
-                    <Text style={styles.info}>Year Low: ${yearLow}</Text>
+            <ScrollView contentContainerStyle={styles.container}>
+                <View style={styles.wrapper}>
+                    <Text style={styles.title}>{name} ({ticker})</Text>
+                    {caret}
+                    <View style={styles.row}>
+                        <Text style={styles.info}>Price: {price}</Text>
+                        <Text style={styles.info}>Volume: {volume}</Text>
+                    </View>
+                    <View style={styles.row}>
+                        <Text style={[styles.info, infoColor]}>Change: ${delta}</Text>
+                        <Text style={[styles.info, infoColor]}>{deltaInPercent}%</Text>
+                    </View>
+                    <View style={styles.row}>
+                        <Text style={styles.info}>Day High: ${dayHigh}</Text>
+                        <Text style={styles.info}>Day Low: ${dayLow}</Text>
+                    </View>
+                    <View style={styles.row}>
+                        <Text style={styles.info}>Year High: ${yearHigh}</Text>
+                        <Text style={styles.info}>Year Low: ${yearLow}</Text>
+                    </View>
                 </View>
             </ScrollView>
         );
@@ -59,6 +63,10 @@ class DetailPage extends Component {
 
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#001d3d"
+    },
     wrapper: {
         alignItems: "center",
         flexDirection: "column"
@@ -69,10 +77,13 @@ const styles = StyleSheet.create({
         justifyContent: "space-between"
     },
     title: {
+        marginTop: 20,
+        color: "white",
         fontSize: 24,
         padding: 10
     },
     info: {
+        color: "white",
         fontSize: 18,
         padding: 10
     },

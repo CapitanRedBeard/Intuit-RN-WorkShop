@@ -28,7 +28,7 @@ class StockResults extends Component {
         };
     }
 
-    detailedView(data) {A
+    detailedView(data) {
         this.props.navigator.push({
             title: data.name,
             component: DetailPage,
@@ -43,13 +43,13 @@ class StockResults extends Component {
         var caret = deltaInPercent >= 0 ? 
             <Image source={require('./Resources/caret-up.png')} style={styles.caret}/> :
             <Image source={require('./Resources/caret-down.png')} style={styles.caret}/>
-
+        var infoColor = deltaInPercent >= 0 ? {color: "#91DC5A"} : {color: "#D80027"}
         deltaInPercent = deltaInPercent + "%";
         return (
             <TouchableHighlight underlayColor='#666666' style={styles.rowWrapper} 
                 onPress={() => {
                     this.props.navigator.push({
-                        title: data.name,
+                        title: rowData.resource.fields.symbol,
                         component: DetailPage,
                         passProps: {data: rowData.resource.fields}
                     }); 
@@ -57,9 +57,9 @@ class StockResults extends Component {
                 <View>
                     <Text style={styles.ticker}>{ticker}</Text>
                     <View style={styles.info}>
-                        <Text style={styles.price}>{price}</Text>
+                        <Text style={[styles.infoText, infoColor]}>{price}</Text>
                         {caret}
-                        <Text style={styles.delta}>{deltaInPercent}</Text>
+                        <Text style={[styles.infoText, infoColor]}>{deltaInPercent}</Text>
                     </View>
                 </View> 
             </TouchableHighlight>
@@ -69,6 +69,7 @@ class StockResults extends Component {
     render() {
         return (
             <ListView
+                style={styles.container}
                 dataSource={this.state.dataSource}
                 renderRow={this.renderRow.bind(this)}/>
         );
@@ -78,18 +79,23 @@ class StockResults extends Component {
 
 
 const styles = StyleSheet.create({
+    container:{
+        backgroundColor: "#001d3d",
+        flex: 1
+    },
     rowWrapper: {
         flexDirection: 'column',
         alignItems: 'flex-start',
-        height: 80,
+        height: 75,
         flex: 1,
         borderBottomWidth: 1,
-        borderBottomColor: 'grey'
+        borderBottomColor: 'white'
     },
     info: {
         flexDirection: 'row',
     },
     ticker: {
+        color: "white",
         fontSize: 18,
         paddingLeft: 10,
         paddingTop: 10
@@ -100,12 +106,7 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         marginTop: 5
     },
-    price: {
-        fontSize: 18,
-        paddingLeft: 10,
-        paddingTop: 5
-    },
-    delta: {
+    infoText: {
         fontSize: 18,
         paddingLeft: 10,
         paddingTop: 5
