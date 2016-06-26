@@ -7,8 +7,13 @@ import {
     View,
     ActivityIndicator,
     TouchableHighlight,
-    ListView
+    ListView,
+    Image
 } from 'react-native';
+
+var oneDigit = function(num) {
+    return Math.round( num * 10 ) / 10;
+} 
 
 class StockResults extends Component {
 
@@ -22,12 +27,25 @@ class StockResults extends Component {
     }
 
     renderRow(rowData, sectionID, rowID) {
-        
+        var ticker = rowData.resource.fields.name;
+        var price = "$" + oneDigit(rowData.resource.fields.price);
+        var deltaInPercent = oneDigit(+rowData.resource.fields.chg_percent);
+        var caret = deltaInPercent >= 0 ? 
+            <Image source={require('./Resources/caret-up.png')} style={styles.caret}/> :
+            <Image source={require('./Resources/caret-down.png')} style={styles.caret}/>
+
+        deltaInPercent = deltaInPercent + "%";
+
         return (
-            <TouchableHighlight underlayColor='#666666'>
+            <TouchableHighlight underlayColor='#666666' style={styles.rowWrapper}>
                 <View>
-                    <Text>{rowData.resource.fields.name}</Text>
-                </View>
+                    <Text style={styles.ticker}>{ticker}</Text>
+                    <View style={styles.info}>
+                        <Text style={styles.price}>{price}</Text>
+                        {caret}
+                        <Text style={styles.delta}>{deltaInPercent}</Text>
+                    </View>
+                </View> 
             </TouchableHighlight>
         );
     }
@@ -41,5 +59,41 @@ class StockResults extends Component {
     }
 
 }
+
+
+const styles = StyleSheet.create({
+    rowWrapper: {
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        height: 80,
+        flex: 1,
+        borderBottomWidth: 1,
+        borderBottomColor: 'grey'
+    },
+    info: {
+        flexDirection: 'row',
+    },
+    ticker: {
+        fontSize: 18,
+        paddingLeft: 10,
+        paddingTop: 10
+    },
+    caret: {
+        height: 24,
+        width: 24,
+        marginLeft: 10,
+        marginTop: 5
+    },
+    price: {
+        fontSize: 18,
+        paddingLeft: 10,
+        paddingTop: 5
+    },
+    delta: {
+        fontSize: 18,
+        paddingLeft: 10,
+        paddingTop: 5
+    }
+});
 
 module.exports = StockResults;
