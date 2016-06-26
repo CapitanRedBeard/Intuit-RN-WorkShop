@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import StockResults from './StockResults';
 
 import {
     AppRegistry,
@@ -60,6 +61,7 @@ class SearchPage extends Component {
 
     _executeQuery(query) {
         console.log(query);
+        
         this.setState({isLoading: true});
 
         fetch(query, {method: "GET"})
@@ -76,6 +78,12 @@ class SearchPage extends Component {
         this.setState({isLoading: false, message: ''});
 
         console.log(response);
+        
+        this.props.navigator.push({
+            title: 'Results',
+            component: StockResults,
+            passProps: {list: response.list.resources}
+        });
     }
 
     onSearchPressed() {
