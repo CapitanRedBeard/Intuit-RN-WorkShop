@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import DetailPage from './DetailPage';
 
 import {
     AppRegistry,
@@ -8,7 +9,8 @@ import {
     ActivityIndicator,
     TouchableHighlight,
     ListView,
-    Image
+    Image,
+    NavigatorIOS
 } from 'react-native';
 
 var oneDigit = function(num) {
@@ -26,6 +28,14 @@ class StockResults extends Component {
         };
     }
 
+    detailedView(data) {A
+        this.props.navigator.push({
+            title: data.name,
+            component: DetailPage,
+            passProps: {data: data}
+        });   
+    }
+
     renderRow(rowData, sectionID, rowID) {
         var ticker = rowData.resource.fields.name;
         var price = "$" + oneDigit(rowData.resource.fields.price);
@@ -35,9 +45,15 @@ class StockResults extends Component {
             <Image source={require('./Resources/caret-down.png')} style={styles.caret}/>
 
         deltaInPercent = deltaInPercent + "%";
-
         return (
-            <TouchableHighlight underlayColor='#666666' style={styles.rowWrapper}>
+            <TouchableHighlight underlayColor='#666666' style={styles.rowWrapper} 
+                onPress={() => {
+                    this.props.navigator.push({
+                        title: data.name,
+                        component: DetailPage,
+                        passProps: {data: rowData.resource.fields}
+                    }); 
+                }}>
                 <View>
                     <Text style={styles.ticker}>{ticker}</Text>
                     <View style={styles.info}>
