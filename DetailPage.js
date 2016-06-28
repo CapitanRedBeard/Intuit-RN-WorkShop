@@ -19,10 +19,10 @@ class DetailPage extends Component {
     constructor(props) {
         super(props);
         
-        let pricePan = new Animated.ValueXY({x: -500, y: 0});
-        let deltaPan = new Animated.ValueXY({x: 500, y: 0});
-        let dayPan = new Animated.ValueXY({x: -500, y: 0});
-        let yearPan = new Animated.ValueXY({x: 500, y: 0});
+        let pricePan = new Animated.Value(-500);
+        let deltaPan = new Animated.Value(500);
+        let dayPan = new Animated.Value(-500);
+        let yearPan = new Animated.Value(500);
         let graphOpacity = new Animated.Value(0);
         
         this.state = {
@@ -39,35 +39,35 @@ class DetailPage extends Component {
             Animated.timing(
                 this.state.pricePan,
                 {
-                    toValue: {x: 0, y: 0},
+                    toValue: 0,
                     duration: 250
                 }
             ),
             Animated.timing(
                 this.state.deltaPan,
                 {
-                    toValue: {x: 0, y: 0},
+                    toValue: 0,
                     duration: 250
                 }
             ),
             Animated.timing(
                 this.state.dayPan,
                 {
-                    toValue: {x: 0, y: 0},
+                    toValue: 0,
                     duration: 250
                 }
             ),
             Animated.timing(
                 this.state.yearPan,
                 {
-                    toValue: {x: 0, y: 0},
+                    toValue: 0,
                     duration: 250
                 }
             ),
             Animated.timing(
                 this.state.graphOpacity,
                 {
-                    toValue: 1,
+                    toValue: 0,
                     duration: 500
                 }
             )
@@ -92,27 +92,24 @@ class DetailPage extends Component {
 
         var infoColor = delta >= 0 ? {color: "#91DC5A"} : {color: "#D80027"};
 
-        // getTranslateTransform() returns [{ translateX: xValue}, {translateY: yValue}],
-        // where xValue and yValue are the interpolated values from the Animated.ValueXY we set on our pan state variable.
-        // Note the way the first animated value is set
         return (
             <ScrollView contentContainerStyle={styles.container}>
                 <View style={styles.wrapper}>
                     <Text style={styles.title}>{name} ({ticker})</Text>
                     {caret}
-                    <Animated.View style={[styles.row, {translateX: this.state.pricePan.xValue}]}>
+                    <Animated.View style={[styles.row, {left: this.state.pricePan}]}>
                         <Text style={styles.info}>Price: {price}</Text>
                         <Text style={styles.info}>Volume: {volume}</Text>
                     </Animated.View>
-                    <Animated.View style={[styles.row, {transform: this.state.deltaPan.getTranslateTransform()}]}>
+                    <Animated.View style={[styles.row, {left: this.state.deltaPan}]}>
                         <Text style={[styles.info, infoColor]}>Change: ${delta}</Text>
                         <Text style={[styles.info, infoColor]}>{deltaInPercent}%</Text>
                     </Animated.View>
-                    <Animated.View style={[styles.row, {transform: this.state.dayPan.getTranslateTransform()}]}>
+                    <Animated.View style={[styles.row, {left: this.state.dayPan}]}>
                         <Text style={styles.info}>Day High: ${dayHigh}</Text>
                         <Text style={styles.info}>Day Low: ${dayLow}</Text>
                     </Animated.View>
-                    <Animated.View style={[styles.row, {transform: this.state.yearPan.getTranslateTransform()}]}>
+                    <Animated.View style={[styles.row, {left: this.state.yearPan}]}>
                         <Text style={styles.info}>Year High: ${yearHigh}</Text>
                         <Text style={styles.info}>Year Low: ${yearLow}</Text>
                     </Animated.View>
