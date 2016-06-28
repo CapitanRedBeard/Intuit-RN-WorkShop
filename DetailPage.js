@@ -5,16 +5,75 @@ import {
     ScrollView,
     StyleSheet,
     View,
-    Image
+    Image,
+    Animated
 } from 'react-native';
 
 
 var twoDigit = function(num) {
     return Math.round( num * 100 ) / 100;
-} 
+};
 
 class DetailPage extends Component {
 
+    constructor(props) {
+        super(props);
+        
+        let pricePan = new Animated.ValueXY({x: -500, y: 0});
+        let deltaPan = new Animated.ValueXY({x: 500, y: 0});
+        let dayPan = new Animated.ValueXY({x: -500, y: 0});
+        let yearPan = new Animated.ValueXY({x: 500, y: 0});
+        let graphOpacity = new Animated.Value(0);
+        
+        this.state = {
+            pricePan: pricePan,
+            deltaPan: deltaPan,
+            dayPan: dayPan,
+            yearPan: yearPan,
+            graphOpacity: graphOpacity
+        }
+    }
+    
+    componentDidMount() {
+        Animated.sequence([
+            Animated.timing(
+                this.state.pricePan,
+                {
+                    toValue: {x: 0, y: 0},
+                    duration: 250
+                }
+            ),
+            Animated.timing(
+                this.state.deltaPan,
+                {
+                    toValue: {x: 0, y: 0},
+                    duration: 250
+                }
+            ),
+            Animated.timing(
+                this.state.dayPan,
+                {
+                    toValue: {x: 0, y: 0},
+                    duration: 250
+                }
+            ),
+            Animated.timing(
+                this.state.yearPan,
+                {
+                    toValue: {x: 0, y: 0},
+                    duration: 250
+                }
+            ),
+            Animated.timing(
+                this.state.graphOpacity,
+                {
+                    toValue: 1,
+                    duration: 500
+                }
+            )
+        ]).start();
+    }
+    
     render() {
         var data = this.props.data;
         var name = data.name;
@@ -31,34 +90,40 @@ class DetailPage extends Component {
             <Image source={require('./Resources/caret-up.png')} style={styles.caret}/> :
             <Image source={require('./Resources/caret-down.png')} style={styles.caret}/>;
 
-        var infoColor = delta >= 0 ? {color: "#91DC5A"} : {color: "#D80027"}
+        var infoColor = delta >= 0 ? {color: "#91DC5A"} : {color: "#D80027"};
 
+        // getTranslateTransform() returns [{ translateX: xValue}, {translateY: yValue}],
+        // where xValue and yValue are the interpolated values from the Animated.ValueXY we set on our pan state variable.
+        // Note the way the first animated value is set
         return (
             <ScrollView contentContainerStyle={styles.container}>
                 <View style={styles.wrapper}>
                     <Text style={styles.title}>{name} ({ticker})</Text>
                     {caret}
-                    <View style={styles.row}>
+                    <Animated.View style={[styles.row, {translateX: this.state.pricePan.xValue}]}>
                         <Text style={styles.info}>Price: {price}</Text>
                         <Text style={styles.info}>Volume: {volume}</Text>
-                    </View>
-                    <View style={styles.row}>
+                    </Animated.View>
+                    <Animated.View style={[styles.row, {transform: this.state.deltaPan.getTranslateTransform()}]}>
                         <Text style={[styles.info, infoColor]}>Change: ${delta}</Text>
                         <Text style={[styles.info, infoColor]}>{deltaInPercent}%</Text>
-                    </View>
-                    <View style={styles.row}>
+                    </Animated.View>
+                    <Animated.View style={[styles.row, {transform: this.state.dayPan.getTranslateTransform()}]}>
                         <Text style={styles.info}>Day High: ${dayHigh}</Text>
                         <Text style={styles.info}>Day Low: ${dayLow}</Text>
-                    </View>
-                    <View style={styles.row}>
+                    </Animated.View>
+                    <Animated.View style={[styles.row, {transform: this.state.yearPan.getTranslateTransform()}]}>
                         <Text style={styles.info}>Year High: ${yearHigh}</Text>
                         <Text style={styles.info}>Year Low: ${yearLow}</Text>
-                    </View>
+                    </Animated.View>
+                    <Animated.Image source={{uri: "http://chart.finance.yahoo.com/z?s=" + ticker + "&t=6m&q=l&l=on&z=s&p=m50,m200"}}
+                           resizeMode={'stretch'}
+                           style={[styles.graph, {opacity: this.state.graphOpacity}]}
+                    />
                 </View>
             </ScrollView>
         );
     }
-
 }
 
 
@@ -92,6 +157,11 @@ const styles = StyleSheet.create({
         width: 48,
         marginLeft: 10,
         marginTop: 5
+    },
+    graph: {
+        marginTop: 25,
+        width: 350,
+        height: 250
     }
 });
 
