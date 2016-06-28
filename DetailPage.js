@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import _ from 'underscore'
 
 import {
     Text,
@@ -9,22 +10,21 @@ import {
     Animated
 } from 'react-native';
 
-
 var twoDigit = function(num) {
-    return Math.round( num * 100 ) / 100;
+    return Math.round(num * 100) / 100;
 };
 
 class DetailPage extends Component {
 
     constructor(props) {
         super(props);
-        
+
         let pricePan = new Animated.Value(-500);
         let deltaPan = new Animated.Value(500);
         let dayPan = new Animated.Value(-500);
         let yearPan = new Animated.Value(500);
         let graphOpacity = new Animated.Value(0);
-        
+
         this.state = {
             pricePan: pricePan,
             deltaPan: deltaPan,
@@ -33,47 +33,36 @@ class DetailPage extends Component {
             graphOpacity: graphOpacity
         }
     }
-    
+
     componentDidMount() {
-        Animated.sequence([
-            Animated.timing(
-                this.state.pricePan,
+
+        const slideAnimatedValues = [this.state.pricePan, this.state.deltaPan, this.state.dayPan, this.state.yearPan];
+
+        let slideAnimations = _.map(slideAnimatedValues, (val) => {
+            return Animated.timing(
+                val,
                 {
                     toValue: 0,
-                    duration: 250
+                    duration: 1000
                 }
-            ),
-            Animated.timing(
-                this.state.deltaPan,
-                {
-                    toValue: 0,
-                    duration: 250
-                }
-            ),
-            Animated.timing(
-                this.state.dayPan,
-                {
-                    toValue: 0,
-                    duration: 250
-                }
-            ),
-            Animated.timing(
-                this.state.yearPan,
-                {
-                    toValue: 0,
-                    duration: 250
-                }
-            ),
+            )
+        });
+
+        let graphOpacityAnimation =
             Animated.timing(
                 this.state.graphOpacity,
                 {
-                    toValue: 0,
+                    toValue: 1,
                     duration: 500
                 }
-            )
+            );
+
+        Animated.sequence([
+            Animated.parallel(slideAnimations),
+            graphOpacityAnimation
         ]).start();
     }
-    
+
     render() {
         var data = this.props.data;
         var name = data.name;
@@ -86,7 +75,7 @@ class DetailPage extends Component {
         var dayHigh = twoDigit(data.day_high);
         var yearLow = twoDigit(data.year_low);
         var yearHigh = twoDigit(data.year_high);
-        var caret = delta >= 0 ? 
+        var caret = delta >= 0 ?
             <Image source={require('./Resources/caret-up.png')} style={styles.caret}/> :
             <Image source={require('./Resources/caret-down.png')} style={styles.caret}/>;
 
@@ -113,16 +102,16 @@ class DetailPage extends Component {
                         <Text style={styles.info}>Year High: ${yearHigh}</Text>
                         <Text style={styles.info}>Year Low: ${yearLow}</Text>
                     </Animated.View>
-                    <Animated.Image source={{uri: "http://chart.finance.yahoo.com/z?s=" + ticker + "&t=6m&q=l&l=on&z=s&p=m50,m200"}}
-                           resizeMode={'stretch'}
-                           style={[styles.graph, {opacity: this.state.graphOpacity}]}
+                    <Animated.Image
+                        source={{uri: "http://chart.finance.yahoo.com/z?s=" + ticker + "&t=6m&q=l&l=on&z=s&p=m50,m200"}}
+                        resizeMode={'stretch'}
+                        style={[styles.graph, {opacity: this.state.graphOpacity}]}
                     />
                 </View>
             </ScrollView>
         );
     }
 }
-
 
 const styles = StyleSheet.create({
     container: {
